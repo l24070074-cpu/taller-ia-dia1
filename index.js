@@ -21,14 +21,4 @@ function sumar(a, b) {
 
 // Ejemplo de uso:
 // Llamamos a la función con dos números y guardamos el resultado
-var res1 = sumar(2, 3);
-// Mostramos el resultado en la consola
-console.log('2 + 3 = ' + res1);
-
-// Ejemplo con cadenas que contienen números (la función convierte a número)
-var res2 = sumar('4', '5');
-console.log(\"'4' + '5' = \" + res2);
-
-// Ejemplo con entrada no numérica (devuelve NaN)
-var res3 = sumar('hola', 2);
-console.log(\"'hola' + 2 = \" + res3);
+var res1 = sumar(2, 3)
