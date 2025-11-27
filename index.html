@@ -3,17 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taller IA - Ejercicios</title>
+    <title>Taller de Programación con IA - Ejercicios</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Animaciones suaves y buenas prácticas */
+        .card{
+            transform: translateY(0);
+            transition: transform 260ms ease, box-shadow 260ms ease, opacity 260ms ease;
+            will-change: transform, opacity;
+            opacity: 0.98;
+        }
+
+        .card:hover{
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: 0 18px 40px rgba(15,23,42,0.12);
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid .card{
+            animation: fadeUp 420ms ease both;
+        }
+
+        /* Añadir un pequeño retardo secuencial a las cartas para un efecto agradable */
+        .grid .card:nth-child(1){ animation-delay: 0ms; }
+        .grid .card:nth-child(2){ animation-delay: 60ms; }
+        .grid .card:nth-child(3){ animation-delay: 120ms; }
+        .grid .card:nth-child(4){ animation-delay: 180ms; }
+        .grid .card:nth-child(5){ animation-delay: 240ms; }
+        .grid .card:nth-child(6){ animation-delay: 300ms; }
+        .grid .card:nth-child(7){ animation-delay: 360ms; }
+        .grid .card:nth-child(8){ animation-delay: 420ms; }
+
+        /* Respetar preferencia de reducción de movimiento */
+        @media (prefers-reduced-motion: reduce){
+            .card, .grid .card{ animation: none !important; transition: none !important; }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Taller IA - Ejercicios</h1>
-            <p>Colección de proyectos y prácticas de desarrollo web</p>
+            <h1>Taller de Programación con IA</h1>
+            <p>Colección de proyectos, prácticas y microproyectos con JavaScript, APIs y DOM.</p>
         </header>
         
         <main class="grid">
@@ -63,6 +101,47 @@
                     <p>Calculadora funcional construida con JavaScript.</p>
                 </div>
                 <div class="card-icon">🧮</div>
+            </a>
+
+            <!-- Proyectos adicionales -->
+            <a href="api-dia-3/index.html" class="card">
+                <div class="card-content">
+                    <h2>Pokédex (PokeAPI)</h2>
+                    <p>Consumir PokeAPI y mostrar información de Pokémon.</p>
+                </div>
+                <div class="card-icon">� poké</div>
+            </a>
+
+            <a href="api-rick-morty/index.html" class="card">
+                <div class="card-content">
+                    <h2>Rick and Morty API</h2>
+                    <p>Listado y búsqueda de personajes usando la API pública.</p>
+                </div>
+                <div class="card-icon">👾</div>
+            </a>
+
+            <a href="miniproyecto/index.html" class="card">
+                <div class="card-content">
+                    <h2>BIBLIOTECA ITSVA</h2>
+                    <p>Sistema de registro de préstamos (form + localStorage / API).</p>
+                </div>
+                <div class="card-icon">📚</div>
+            </a>
+
+            <a href="minipyoectoBARBER/index.html" class="card">
+                <div class="card-content">
+                    <h2>MAYAN BARBER</h2>
+                    <p>Gestión simple de citas para barbería (horarios y validación).</p>
+                </div>
+                <div class="card-icon">💈</div>
+            </a>
+
+            <a href="funciones-dia-3/index.html" class="card">
+                <div class="card-content">
+                    <h2>Funciones Día 3</h2>
+                    <p>Ejercicios: áreas, palíndromos y utilidades.</p>
+                </div>
+                <div class="card-icon">⚙️</div>
             </a>
         </main>
 

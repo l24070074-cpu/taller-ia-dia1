@@ -57,6 +57,9 @@ function mostrarTarjetaPokemon(pokemon) {
                    pokemon.sprites.front_default || 
                    'https://via.placeholder.com/200';
     
+    // Obtener sonido
+    const sonido = pokemon.cries?.latest || '';
+    
     // Obtener stats principales
     const stats = pokemon.stats.reduce((acc, stat) => {
         acc[stat.stat.name] = stat.base_stat;
@@ -119,10 +122,20 @@ function mostrarTarjetaPokemon(pokemon) {
                     </div>
                 </div>
             </div>
+
+            ${sonido ? `<button class="sound-button" onclick="reproducirSonido('${sonido}')">🔊 Escuchar sonido</button>` : ''}
         </div>
     `;
 
     appDiv.innerHTML = tarjeta;
+}
+
+// Función para reproducir el sonido del Pokémon
+function reproducirSonido(urlSonido) {
+    const audio = new Audio(urlSonido);
+    audio.play().catch(error => {
+        console.error('Error al reproducir sonido:', error);
+    });
 }
 
 // Manejar Enter en el input
