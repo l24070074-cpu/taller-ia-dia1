@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Metadatos del documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Celsius a Fahrenheit</title>
+    
+    <!-- Estilos CSS inline -->
+    <style>
+        /* Estilos generales de la página */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Fondo de color suave y centrado vertical */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container {
+            /* Contenedor principal centrado con tarjeta de estilo */
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h1 {
+            /* Título principal */
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+
+        .form-group {
+            /* Grupo de formulario con espaciado */
+            margin-bottom: 20px;
+        }
+
+        label {
+            /* Etiqueta accesible para el campo de entrada */
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="number"] {
+            /* Campo de entrada de números */
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            /* Efecto visual cuando el input tiene foco */
+            outline: none;
+            border-color: #667eea;
+        }
+
+        input[type="number"]::placeholder {
+            /* Texto de ayuda dentro del input */
+            color: #aaa;
+        }
+
+        .button-group {
+            /* Grupo de botones */
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button {
+            /* Estilos generales de botones */
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #btnConvertir {
+            /* Botón de convertir con color primario */
+            background-color: #667eea;
+            color: white;
+        }
+
+        #btnConvertir:hover {
+            /* Efecto hover: cambiar color y escala */
+            background-color: #5568d3;
+            transform: scale(1.05);
+        }
+
+        #btnConvertir:active {
+            /* Efecto al hacer click */
+            transform: scale(0.98);
+        }
+
+        #btnLimpiar {
+            /* Botón secundario para limpiar */
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #btnLimpiar:hover {
+            /* Efecto hover en botón secundario */
+            background-color: #e0e0e0;
+        }
+
+        .result-area {
+            /* Área donde se muestra el resultado */
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #667eea;
+            border-radius: 8px;
+            display: none; /* Oculto por defecto */
+        }
+
+        .result-area.active {
+            /* Mostrar área cuando hay resultado */
+            display: block;
+        }
+
+        .result-text {
+            /* Texto del resultado */
+            font-size: 20px;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .copy-button {
+            /* Botón para copiar resultado */
+            background-color: #764ba2;
+            color: white;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .copy-button:hover {
+            /* Efecto hover en botón de copiar */
+            background-color: #6a3a8a;
+        }
+
+        .error-message {
+            /* Mensaje de error */
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message.active {
+            /* Mostrar mensaje de error cuando sea necesario */
+            display: block;
+        }
+
+        .success-message {
+            /* Mensaje de éxito (copia) */
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .success-message.active {
+            /* Mostrar mensaje de éxito */
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- Título -->
+        <h1>🌡️ Conversor de Temperatura</h1>
+
+        <!-- Formulario -->
+        <form id="conversorForm">
+            <!-- Grupo del campo de entrada -->
+            <div class="form-group">
+                <label for="celsiusInput">Ingresa grados Celsius:</label>
+                <input 
+                    type="number" 
+                    id="celsiusInput" 
+                    placeholder="Ej: 25"
+                    step="0.01"
+                    required
+                >
+            </div>
+
+            <!-- Grupo de botones -->
+            <div class="button-group">
+                <button type="button" id="btnConvertir">Convertir</button>
+                <button type="button" id="btnLimpiar">Limpiar</button>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div class="error-message" id="errorMessage">
+                ⚠️ Por favor, ingresa un número válido.
+            </div>
+        </form>
+
+        <!-- Área de resultado -->
+        <div class="result-area" id="resultArea">
+            <div class="result-text" id="resultText"></div>
+            <button class="copy-button" id="btnCopiar">Copiar resultado</button>
+            <div class="success-message" id="successMessage">✓ ¡Copiado al portapapeles!</div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript inline -->
+    <script>
+        // ===== FUNCIÓN PRINCIPAL DE CONVERSIÓN =====
+        // Esta función toma un valor en Celsius y devuelve su equivalente en Fahrenheit
+        // Fórmula: F = C × 9/5 + 32
+        function celsiusToFahrenheit(c) {
+            return (c * 9 / 5) + 32;
+        }
+
+        // ===== SELECCIÓN DE ELEMENTOS DEL DOM =====
+        // Obtenemos referencias a los elementos HTML para poder manipularlos desde JavaScript
+        const celsiusInput = document.getElementById('celsiusInput');
+        const btnConvertir = document.getElementById('btnConvertir');
+        const btnLimpiar = document.getElementById('btnLimpiar');
+        const btnCopiar = document.getElementById('btnCopiar');
+        const resultArea = document.getElementById('resultArea');
+        const resultText = document.getElementById('resultText');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+
+        // ===== FUNCIÓN DE VALIDACIÓN =====
+        // Valida que el valor ingresado sea un número válido y no esté vacío
+        function validarEntrada(valor) {
+            // Verifica si el valor es un número y no está vacío
+            return valor !== '' && !isNaN(valor);
+        }
+
+        // ===== FUNCIÓN PARA MOSTRAR ERRORES =====
+        // Muestra u oculta el mensaje de error según sea necesario
+        function mostrarError(mostrar) {
+            if (mostrar) {
+                errorMessage.classList.add('active');
+                resultArea.classList.remove('active');
+            } else {
+                errorMessage.classList.remove('active');
+            }
+        }
+
+        // ===== FUNCIÓN PARA REALIZAR LA CONVERSIÓN =====
+        // Lee el valor del input, lo valida, lo convierte y muestra el resultado
+        function convertir() {
+            // Obtenemos el valor ingresado en el campo de entrada
+            const celsius = parseFloat(celsiusInput.value);
+
+            // Validamos que sea un número válido
+            if (!validarEntrada(celsiusInput.value)) {
+                mostrarError(true);
+                return; // Salimos de la función si la validación falla
+            }
+
+            // Ocultamos el mensaje de error si todo está bien
+            mostrarError(false);
+
+            // Convertimos el valor usando la función celsiusToFahrenheit
+            const fahrenheit = celsiusToFahrenheit(celsius);
+
+            // Redondeamos el resultado a 2 decimales
+            const fahrenheitRedondeado = fahrenheit.toFixed(2);
+
+            // Mostramos el resultado en la interfaz
+            resultText.textContent = `${celsius}°C = ${fahrenheitRedondeado}°F`;
+            resultArea.classList.add('active');
+
+            // Guardamos los valores en variables globales para usar en copiar
+            window.ultimoResultado = {
+                celsius: celsius,
+                fahrenheit: fahrenheitRedondeado
+            };
+        }
+
+        // ===== FUNCIÓN PARA LIMPIAR CAMPOS =====
+        // Limpia la entrada, oculta el resultado y los mensajes de error
+        function limpiar() {
+            celsiusInput.value = ''; // Borra el contenido del input
+            resultArea.classList.remove('active'); // Oculta el área de resultado
+            errorMessage.classList.remove('active'); // Oculta el error
+            successMessage.classList.remove('active'); // Oculta el mensaje de copia
+            celsiusInput.focus(); // Enfoca nuevamente el input para mejor UX
+        }
+
+        // ===== FUNCIÓN PARA COPIAR RESULTADO =====
+        // Copia el resultado al portapapeles del usuario
+        function copiarResultado() {
+            if (window.ultimoResultado) {
+                // Creamos el texto a copiar
+                const texto = `${window.ultimoResultado.celsius}°C = ${window.ultimoResultado.fahrenheit}°F`;
+                
+                // Usamos la API Clipboard para copiar al portapapeles
+                navigator.clipboard.writeText(texto).then(() => {
+                    // Mostramos mensaje de éxito
+                    successMessage.classList.add('active');
+                    
+                    // Ocultamos el mensaje después de 2 segundos
+                    setTimeout(() => {
+                        successMessage.classList.remove('active');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Error al copiar:', err);
+                });
+            }
+        }
+
+        // ===== EVENT LISTENERS (Escuchadores de Eventos) =====
+        // Estos vinculan las funciones anteriores a acciones del usuario
+
+        // Evento: hacer click en el botón "Convertir"
+        btnConvertir.addEventListener('click', function(e) {
+            e.preventDefault(); // Previene el comportamiento por defecto del formulario
+            convertir();
+        });
+
+        // Evento: presionar la tecla Enter dentro del campo de entrada
+        celsiusInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') { // Si la tecla presionada fue Enter
+                e.preventDefault();
+                convertir();
+            }
+        });
+
+        // Evento: hacer click en el botón "Limpiar"
+        btnLimpiar.addEventListener('click', function(e) {
+            e.preventDefault();
+            limpiar();
+        });
+
+        // Evento: hacer click en el botón "Copiar resultado"
+        btnCopiar.addEventListener('click', function() {
+            copiarResultado();
+        });
+
+        // Evento: cuando la página se carga, enfocamos el input
+        window.addEventListener('load', function() {
+            celsiusInput.focus();
+        });
+    </script>
+</body>
+</html>

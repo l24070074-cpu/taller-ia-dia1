@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Validador de Palíndromos</title>
+  <style>
+    /* Estilos simples y responsivos */
+    :root{--bg:#f6f8fa;--card:#fff;--accent:#4b7bec;--ok:#2ecc71;--bad:#e74c3c}
+    body{background:var(--bg);font-family:Segoe UI, Tahoma, Verdana, sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;padding:20px}
+    .card{background:var(--card);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.08);width:100%;max-width:700px;padding:28px}
+    h1{margin:0 0 16px;font-size:22px;color:#223}
+    p.lead{margin:0 0 18px;color:#445}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    input[type="text"]{flex:1;padding:12px;border:2px solid #e3e6ea;border-radius:8px;font-size:16px}
+    button{padding:10px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+    #btnCheck{background:var(--accent);color:white}
+    #btnClear{background:#f0f0f0;color:#333}
+    #result{margin-top:18px;padding:14px;border-radius:8px;background:#fcfcfd;border:1px solid #eef2f6;display:flex;align-items:center;gap:12px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;font-weight:700;color:white}
+    .badge.ok{background:var(--ok)}
+    .badge.bad{background:var(--bad)}
+    .explain{margin-top:12px;color:#556;font-size:14px}
+    .examples{margin-top:16px;display:flex;gap:8px;flex-wrap:wrap}
+    .example{background:#f5f7fb;padding:8px 10px;border-radius:8px;cursor:pointer;border:1px solid #eef2f6}
+    @media(max-width:520px){h1{font-size:20px}.row{flex-direction:column}button{width:100%}}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Validador de Palíndromos</h1>
+    <p class="lead">Escribe una frase o palabra y comprueba si es un palíndromo. Se ignoran mayúsculas, espacios, signos y acentos.</p>
+
+    <!-- Campo de entrada y botones -->
+    <div class="row">
+      <input id="txtInput" type="text" placeholder="Ej: Anita lava la tina" aria-label="Texto a comprobar">
+      <button id="btnCheck">Comprobar</button>
+      <button id="btnClear">Limpiar</button>
+    </div>
+
+    <!-- Resultado -->
+    <div id="result" aria-live="polite" hidden>
+      <span id="badge" class="badge"></span>
+      <div>
+        <div id="message" style="font-weight:700"></div>
+        <div id="details" style="color:#556;margin-top:6px;font-size:13px"></div>
+      </div>
+    </div>
+
+    <div class="explain">Comentarios: la función <code>esPalindromo(texto)</code> normaliza el texto (quita acentos), convierte a minúsculas y elimina todo lo que no sea letra o número antes de comprobar.</div>
+
+    <div class="examples">
+      <div class="example">Anita lava la tina</div>
+      <div class="example">A man, a plan, a canal: Panama</div>
+      <div class="example">reconocer</div>
+      <div class="example">No es palindromo</div>
+    </div>
+  </main>
+
+  <script>
+    // ---- Lógica del validador (basada en palindromo.js) ----
+    // La función es la misma que en el archivo original `palindromo.js`
+    // pero adaptada para ejecutarse en el navegador (sin module.exports).
+    function esPalindromo(texto) {
+      // Aseguramos que trabajamos con string
+      texto = String(texto || '');
+      // normalize('NFD') separa caracteres base y diacríticos
+      // luego eliminamos los diacríticos (acentos) con la clase Unicode
+      const limpio = texto
+        .normalize('NFD')
+        .replace(/[\u000300-\\u036f]/g, '') // elimina acentos
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, ''); // mantiene solo letras y números latinos
+
+      // Invertimos la cadena limpia y comparamos
+      const invertido = limpio.split('').reverse().join('');
+      return limpio === invertido;
+    }
+
+    // ---- Selección de elementos ----
+    const input = document.getElementById('txtInput');
+    const btnCheck = document.getElementById('btnCheck');
+    const btnClear = document.getElementById('btnClear');
+    const result = document.getElementById('result');
+    const badge = document.getElementById('badge');
+    const message = document.getElementById('message');
+    const details = document.getElementById('details');
+    const examples = document.querySelectorAll('.example');
+
+    // ---- Función que ejecuta la comprobación y actualiza la UI ----
+    function comprobar() {
+      const valor = input.value.trim();
+      if (!valor) {
+        // Si no hay texto, ocultar resultado y enfocar
+        result.hidden = true;
+        input.focus();
+        return;
+      }
+
+      // Llamamos a la función esPalindromo (la misma lógica que el .js del repo)
+      const es = esPalindromo(valor);
+
+      // Mostramos el área de resultado
+      result.hidden = false;
+
+      if (es) {
+        badge.className = 'badge ok';
+        badge.textContent = 'SÍ';
+        message.textContent = 'Es un palíndromo ✅';
+        details.textContent = `Texto original: "${valor}"`;
+      } else {
+        badge.className = 'badge bad';
+        badge.textContent = 'NO';
+        message.textContent = 'No es un palíndromo ✖';
+        details.textContent = `Texto original: "${valor}"`;
+      }
+    }
+
+    // ---- Event listeners ----
+    btnCheck.addEventListener('click', function(e){ e.preventDefault(); comprobar(); });
+
+    // Enter en el campo input también dispara la comprobación
+    input.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); comprobar(); }});
+
+    btnClear.addEventListener('click', function(){ input.value=''; result.hidden=true; input.focus(); });
+
+    // Ejemplos clickeables
+    examples.forEach(el => el.addEventListener('click', function(){ input.value = this.textContent; comprobar(); }));
+
+    // Enfoque al cargar
+    window.addEventListener('load', () => input.focus());
+  </script>
+</body>
+</html>

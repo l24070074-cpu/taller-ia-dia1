@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Metadatos del documento -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Colores Aleatorios Interactivo</title>
+    
+    <!-- Estilos CSS inline -->
+    <style>
+        /* Reiniciar estilos por defecto */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Fondo general de la página */
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            /* Contenedor principal */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            padding: 50px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            /* Título principal */
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .color-display {
+            /* ELEMENTO 2: Div grande para mostrar el color - MÍNIMO 300px de altura */
+            width: 100%;
+            height: 300px;
+            background-color: #3498db;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .color-text {
+            /* Texto dentro del display del color */
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-info {
+            /* Información del color (valores HEX y RGB) */
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #3498db;
+        }
+
+        .color-value {
+            /* Etiqueta y valor del color */
+            margin: 12px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .color-hex {
+            /* Valor HEX del color (destacado) */
+            font-weight: 700;
+            color: #2c3e50;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+        }
+
+        .button-group {
+            /* ELEMENTO 4: Grupo de botones de control */
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        button {
+            /* Estilos generales de botones */
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 130px;
+        }
+
+        #btnGenerar {
+            /* ELEMENTO 3: Botón Generar Color - botón principal */
+            background-color: #3498db;
+            color: white;
+        }
+
+        #btnGenerar:hover {
+            /* Efecto hover */
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        #btnGenerar:active {
+            /* Efecto al hacer click */
+            transform: translateY(-1px);
+        }
+
+        #btnCopiar {
+            /* Botón de copiar */
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        #btnCopiar:hover {
+            /* Efecto hover */
+            background-color: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        #btnCopiar:active {
+            /* Efecto al hacer click */
+            transform: translateY(-1px);
+        }
+
+        #btnAleatorioAuto {
+            /* Botón de generar automático */
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #btnAleatorioAuto:hover {
+            /* Efecto hover */
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        #btnAleatorioAuto:active {
+            /* Efecto al hacer click */
+            transform: translateY(-1px);
+        }
+
+        .message {
+            /* Mensaje de feedback (copia, etc.) */
+            color: #2ecc71;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .message.active {
+            /* Mostrar mensaje cuando sea necesario */
+            display: block;
+        }
+
+        .speed-control {
+            /* Control de velocidad para generación automática */
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .speed-label {
+            /* Etiqueta de velocidad */
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="range"] {
+            /* Slider de velocidad */
+            width: 100%;
+            cursor: pointer;
+            height: 6px;
+            border-radius: 5px;
+            background: #ddd;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            /* Thumb del slider (Chrome/Edge) */
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            /* Hover del thumb */
+            background: #2980b9;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            /* Thumb del slider (Firefox) */
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3498db;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            /* Hover del thumb en Firefox */
+            background: #2980b9;
+        }
+
+        .speed-value {
+            /* Valor de velocidad mostrado */
+            color: #3498db;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .paleta-recientes {
+            /* Paleta de colores recientes */
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .paleta-titulo {
+            /* Título de colores recientes */
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .paleta-colores {
+            /* Contenedor de colores */
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .color-muestra {
+            /* Muestras de color recientes */
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-muestra:hover {
+            /* Efecto hover en muestras */
+            transform: scale(1.1);
+            border-color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- ELEMENTO 1: Título de Colores Aleatorios -->
+        <h1>🎨 Colores Aleatorios</h1>
+
+        <!-- ELEMENTO 2: Div grande que muestra el color (300px mínimo) -->
+        <div class="color-display" id="colorDisplay">
+            <div class="color-text" id="colorText">#3498db</div>
+        </div>
+
+        <!-- Información del color -->
+        <div class="color-info">
+            <div class="color-value">
+                <strong>HEX:</strong> <span class="color-hex" id="colorHex">#3498db</span>
+            </div>
+            <div class="color-value">
+                <strong>RGB:</strong> <span class="color-hex" id="colorRGB">rgb(52, 152, 219)</span>
+            </div>
+        </div>
+
+        <!-- ELEMENTO 4: Botones de control -->
+        <div class="button-group">
+            <!-- ELEMENTO 3: Botón Generar Color -->
+            <button id="btnGenerar">Generar Color</button>
+            <button id="btnCopiar">Copiar HEX</button>
+            <button id="btnAleatorioAuto">Auto</button>
+        </div>
+
+        <!-- Mensaje de feedback -->
+        <div class="message" id="mensaje">✓ ¡Color HEX copiado al portapapeles!</div>
+
+        <!-- Control de velocidad para generación automática -->
+        <div class="speed-control">
+            <label class="speed-label">Velocidad de generación (ms):</label>
+            <input type="range" id="speedControl" min="100" max="3000" value="500" step="100">
+            <div class="speed-value" id="speedValue">500 ms</div>
+        </div>
+
+        <!-- Paleta de colores recientes -->
+        <div class="paleta-recientes">
+            <span class="paleta-titulo">Colores Recientes:</span>
+            <div class="paleta-colores" id="paleta"></div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript inline -->
+    <script>
+        // ===== VARIABLES GLOBALES =====
+        // Almacenan el estado del generador de colores
+        let colorActual = '#3498db'; // Color inicial
+        let autoGenerando = false; // Bandera para indicar si está en modo automático
+        let velocidad = 500; // Velocidad de generación en milisegundos
+        let intervalo = null; // ID del intervalo para poder detenerlo
+        let coloresRecientes = []; // Array para guardar los últimos colores generados
+
+        // ===== SELECCIÓN DE ELEMENTOS DEL DOM =====
+        const colorDisplay = document.getElementById('colorDisplay');
+        const colorHex = document.getElementById('colorHex');
+        const colorRGB = document.getElementById('colorRGB');
+        const btnGenerar = document.getElementById('btnGenerar');
+        const btnCopiar = document.getElementById('btnCopiar');
+        const btnAleatorioAuto = document.getElementById('btnAleatorioAuto');
+        const speedControl = document.getElementById('speedControl');
+        const speedValue = document.getElementById('speedValue');
+        const mensaje = document.getElementById('mensaje');
+        const paleta = document.getElementById('paleta');
+
+        // ===== FUNCIÓN: Generar color aleatorio =====
+        // Genera un código HEX aleatorio entre #000000 y #FFFFFF
+        function generarColorAleatorio() {
+            // Genera un número aleatorio entre 0 y 16777215 (FFFFFF en decimal)
+            const numeroAleatorio = Math.floor(Math.random() * 16777215);
+            
+            // Convierte el número a hexadecimal y agrega el símbolo #
+            // padStart(6, '0') se asegura de que siempre tenga 6 dígitos
+            const colorHex = '#' + numeroAleatorio.toString(16).padStart(6, '0').toUpperCase();
+            
+            return colorHex;
+        }
+
+        // ===== FUNCIÓN: Convertir HEX a RGB =====
+        // Convierte un color en formato HEX a formato RGB
+        function hexARGB(hex) {
+            // Removemos el # si está presente
+            hex = hex.replace('#', '');
+            
+            // Extraemos los valores R, G, B del código hexadecimal
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // ===== FUNCIÓN: Actualizar la interfaz =====
+        // Actualiza todos los elementos visuales con el nuevo color
+        function actualizarColor(nuevoColor) {
+            // Guardamos el color actual
+            colorActual = nuevoColor;
+            
+            // Actualizamos la caja de color
+            colorDisplay.style.backgroundColor = nuevoColor;
+            
+            // Actualizamos el texto mostrado
+            const colorText = document.getElementById('colorText');
+            if (colorText) colorText.textContent = nuevoColor;
+            
+            // Actualizamos los valores mostrados
+            colorHex.textContent = nuevoColor;
+            colorRGB.textContent = hexARGB(nuevoColor);
+            
+            // Agregamos el color a la paleta de recientes
+            agregarARecientes(nuevoColor);
+        }
+
+        // ===== FUNCIÓN: Agregar color a recientes =====
+        // Guarda el color en la lista de recientes (máximo 6 colores)
+        function agregarARecientes(color) {
+            // Si el color ya está en la lista, lo removemos para evitar duplicados
+            coloresRecientes = coloresRecientes.filter(c => c !== color);
+            
+            // Agregamos el color al inicio de la lista
+            coloresRecientes.unshift(color);
+            
+            // Si tenemos más de 6 colores, removemos los más antiguos
+            if (coloresRecientes.length > 6) {
+                coloresRecientes = coloresRecientes.slice(0, 6);
+            }
+            
+            // Actualizamos la paleta visual
+            actualizarPaleta();
+        }
+
+        // ===== FUNCIÓN: Actualizar paleta visual =====
+        // Renderiza las muestras de color recientes en la interfaz
+        function actualizarPaleta() {
+            // Limpiamos el contenedor de la paleta
+            paleta.innerHTML = '';
+            
+            // Iteramos sobre cada color reciente
+            coloresRecientes.forEach(color => {
+                // Creamos un elemento div para cada color
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'color-muestra';
+                colorDiv.style.backgroundColor = color;
+                
+                // Al hacer click en una muestra, cargamos ese color
+                colorDiv.addEventListener('click', function() {
+                    actualizarColor(color);
+                });
+                
+                // Agregamos la muestra a la paleta
+                paleta.appendChild(colorDiv);
+            });
+        }
+
+        // ===== FUNCIÓN: Generar nuevo color =====
+        // Genera un color aleatorio y actualiza la interfaz
+        function generarNuevoColor() {
+            const nuevoColor = generarColorAleatorio();
+            actualizarColor(nuevoColor);
+        }
+
+        // ===== FUNCIÓN: Copiar color al portapapeles =====
+        // Copia el código HEX del color actual al portapapeles
+        function copiarColor() {
+            // Usamos la API Clipboard para copiar el texto
+            navigator.clipboard.writeText(colorActual).then(() => {
+                // Mostramos el mensaje de éxito
+                mensaje.classList.add('active');
+                
+                // Lo ocultamos después de 2 segundos
+                setTimeout(() => {
+                    mensaje.classList.remove('active');
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar:', err);
+            });
+        }
+
+        // ===== FUNCIÓN: Iniciar/Detener generación automática =====
+        // Activa o desactiva la generación automática de colores
+        function alternarAleatorioAutomatico() {
+            if (autoGenerando) {
+                // Si está activado, lo detenemos
+                clearInterval(intervalo); // Detenemos el intervalo
+                autoGenerando = false;
+                btnAleatorioAuto.textContent = 'Auto (Iniciar)'; // Cambiamos el texto del botón
+                btnAleatorioAuto.style.backgroundColor = '#e74c3c'; // Color rojo (detener)
+            } else {
+                // Si está desactivado, lo iniciamos
+                autoGenerando = true;
+                btnAleatorioAuto.textContent = 'Auto (Detener)'; // Cambiamos el texto del botón
+                btnAleatorioAuto.style.backgroundColor = '#f39c12'; // Color naranja (activo)
+                
+                // Generamos un color inmediatamente
+                generarNuevoColor();
+                
+                // Configuramos el intervalo para generar colores automáticamente
+                intervalo = setInterval(generarNuevoColor, velocidad);
+            }
+        }
+
+        // ===== FUNCTION: Actualizar velocidad =====
+        // Actualiza la velocidad de generación automática
+        function actualizarVelocidad(valor) {
+            velocidad = parseInt(valor);
+            speedValue.textContent = velocidad + ' ms';
+            
+            // Si está en modo automático, reiniciamos el intervalo con la nueva velocidad
+            if (autoGenerando) {
+                clearInterval(intervalo);
+                intervalo = setInterval(generarNuevoColor, velocidad);
+            }
+        }
+
+        // ===== EVENT LISTENERS (Escuchadores de eventos) =====
+        // Vinculamos las funciones a las acciones del usuario
+
+        // Evento: Click en botón "Generar Color"
+        btnGenerar.addEventListener('click', generarNuevoColor);
+
+        // Evento: Click en botón "Copiar HEX"
+        btnCopiar.addEventListener('click', copiarColor);
+
+        // Evento: Click en botón "Auto"
+        btnAleatorioAuto.addEventListener('click', alternarAleatorioAutomatico);
+
+        // Evento: Cambiar velocidad en el slider
+        speedControl.addEventListener('input', function(e) {
+            actualizarVelocidad(e.target.value);
+        });
+
+        // Evento: Presionar tecla de espacio para generar color rápidamente
+        document.addEventListener('keydown', function(e) {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Evitamos el comportamiento por defecto (scroll)
+                generarNuevoColor();
+            }
+        });
+
+        // Evento: Presionar tecla "C" para copiar
+        document.addEventListener('keydown', function(e) {
+            if (e.key.toLowerCase() === 'c' && e.ctrlKey) {
+                e.preventDefault();
+                copiarColor();
+            }
+        });
+
+        // Al cargar la página, inicializamos la paleta con el color actual
+        window.addEventListener('load', function() {
+            agregarARecientes(colorActual);
+        });
+    </script>
+</body>
+</html>
